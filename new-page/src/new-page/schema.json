@@ -1,0 +1,24 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "id": "NewPageSchematics",
+    "title": "New Page Options Schema",
+    "type": "object",
+    "description": "generates a new page in the project",
+    "properties": {
+        "name": {
+            "type":  "string",
+            "description": "name of the page being added",
+            "$default": {
+                "$source": "argv",
+                "index": 0
+            }
+        },
+        "nocomp": {
+            "type": "boolean",
+            "description": "define if it uses the generic component or creates a new component"
+        }
+    },
+    "required": [
+        "name"
+    ]
+}
