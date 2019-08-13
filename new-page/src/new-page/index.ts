@@ -4,12 +4,10 @@ import {
   Tree,
   url,
   apply,
+  template,
   mergeWith,
   chain,
-  SchematicsException,
-  FileEntry,
-  forEach,
-  move
+  SchematicsException
 } from '@angular-devkit/schematics';
 import { strings } from '@angular-devkit/core';
 // import * as ts from 'typescript';
@@ -24,6 +22,7 @@ export interface NewPageOptions {
   path?: string;
   module?: string;
   nocomp?: boolean;
+  compName: string;
 }
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
@@ -39,6 +38,7 @@ export function newPage(_options: NewPageOptions): Rule {
     // find paths to all relevant modules based on name argument
     const pathArray = _options.name.split('/');
     const compName = pathArray[pathArray.length -1];
+    _options.compName = compName;
     const modulePath = bubbleFileFind(pathArray, /form.module/, tree);
     const routingPath = bubbleFileFind(pathArray, /routing.module/, tree);
 
@@ -65,18 +65,10 @@ export function newPage(_options: NewPageOptions): Rule {
     }
 
     const sourceTemplates = url('./files');
-    const basePath = pathFromArr(pathArray, pathArray.length - 2);
-    basePath[0]
     const sourceParameterizedTemplates = apply(sourceTemplates, [
-      move(basePath),
-      forEach((file: FileEntry) => {
-        if (tree.exists(basePath + file.path)) {
-        _context.logger.warn(`Warning: overriding ${file.path}. If This isn't intended, rollback.`);
-        tree.overwrite(basePath + file.path, file.content)
-        } else {
-          tree.overwrite
-        }
-        return file;
+      template({
+        ..._options,
+        ...strings
       })
     ]);
     return chain([
